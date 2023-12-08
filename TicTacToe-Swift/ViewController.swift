@@ -35,20 +35,74 @@ class ViewController: UIViewController {
     
     var NOUGTH = "O"
     var CROSS = "X"
+    var board = [UIButton]()
     
     
     
     //MARK: -FUNCTIONS
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        setInitViews()
+        
+    }
+    
+    private func setInitViews() {
+        board.append(a1)
+        board.append(a2)
+        board.append(a3)
+        board.append(c1)
+        board.append(c2)
+        board.append(c3)
+        board.append(b1)
+        board.append(b2)
+        board.append(b3)
+        
     }
     
     @IBAction func boardTapAction(_ sender: UIButton) {
         addToBoard(sender)
+        
+        if fullBoard() {
+            resultAlert(title: "Draw")
+        }
     }
     
-    func addToBoard(_ sender: UIButton) {
+    private func resultAlert(title:String) {
+        let ac = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+        ac.addAction(UIAlertAction(title: "Reset", style: .default, handler: { _ in
+            self.resetBoard()
+        }))
+        self.present(ac, animated: true, completion: nil)
+    }
+    
+    private func resetBoard() {
+        for button in board {
+            button.setTitle(nil, for: .normal)
+            button.isEnabled = true
+        }
+        
+        if firstTurn == Turn.Nougth {
+            firstTurn = Turn.Cross
+            turnLabel.text = CROSS
+        } else if firstTurn == Turn.Cross {
+            firstTurn = Turn.Nougth
+            turnLabel.text = NOUGTH
+        }
+        
+        currentTurn = firstTurn
+    }
+    
+    private func fullBoard() -> Bool {
+        for button in board {
+            if button.title(for: .normal) == nil {
+                return false
+            }
+        }
+        return true
+    }
+    
+    private func addToBoard(_ sender: UIButton) {
         if sender.title(for: .normal) == nil {
             if currentTurn == Turn.Nougth {
                 sender.setTitle(NOUGTH, for: .normal)
